@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Symphony Dec 4 Fare Watch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+/* Layout: a departures-board header over a single working column — verdict, log a fare, history, then reference. */
+:root{
+  --bg:#eef3f4; --surface:#ffffff; --ink:#0f2a33; --muted:#557079; --line:#cfdcdf;
+  --accent:#0b7a86; --accent-ink:#ffffff; --board:#0f2a33; --board-ink:#e8f4f5; --board-dim:#8fb3ba;
+  --great:#11804a; --good:#2f8f6b; --fair:#a26a00; --high:#b3402a;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0a1a20; --surface:#11262d; --ink:#e3eef0; --muted:#8eaab1; --line:#24414a;
+  --accent:#3cb6c2; --accent-ink:#06191e; --board:#061317; --board-ink:#e3eef0; --board-dim:#6f949c;
+  --great:#4cc98a; --good:#62c29b; --fair:#e0a93a; --high:#ef7b62; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0a1a20; --surface:#11262d; --ink:#e3eef0; --muted:#8eaab1; --line:#24414a;
+  --accent:#3cb6c2; --accent-ink:#06191e; --board:#061317; --board-ink:#e3eef0; --board-dim:#6f949c;
+  --great:#4cc98a; --good:#62c29b; --fair:#e0a93a; --high:#ef7b62; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:grid;gap:28px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0}
+h2{font-size:1.25rem;font-weight:700}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.board{background:var(--board);color:var(--board-ink);border-radius:14px;padding:22px clamp(16px,4vw,28px);display:grid;gap:16px}
+.board h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.1}
+.board .label{color:var(--board-dim)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px 20px}
+.facts div{display:grid;gap:2px}
+.facts .v{font-family:var(--mono);font-size:1rem}
+.route{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--mono);font-size:.82rem}
+.route span{border:1px solid var(--board-dim);border-radius:4px;padding:2px 8px;color:var(--board-ink)}
+.route span.sea{border-style:dashed;color:var(--board-dim)}
+.note{font-size:.86rem;color:var(--board-dim);margin:0}
+section{display:grid;gap:12px}
+.verdict{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.price{font-family:var(--mono);font-size:clamp(2rem,7vw,2.8rem);font-weight:500;line-height:1}
+.pill{display:inline-block;font-weight:600;font-size:.82rem;padding:3px 10px;border-radius:999px;color:#fff;background:var(--muted)}
+.pill.great{background:var(--great)}.pill.good{background:var(--good)}.pill.fair{background:var(--fair)}.pill.high{background:var(--high)}
+.pill.great,.pill.good,.pill.fair,.pill.high{color:var(--accent-ink)}
+.scale{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--great),var(--good) 33%,var(--fair) 66%,var(--high));margin-top:10px}
+.scale i{position:absolute;top:-5px;width:4px;height:20px;background:var(--ink);border-radius:2px;transform:translateX(-2px)}
+.scale-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:4px}
+.verdict p{margin:6px 0 0;color:var(--muted);font-size:.9rem;max-width:60ch}
+@media (max-width:560px){.verdict{grid-template-columns:1fr}}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+label{display:grid;gap:4px;font-size:.8rem;color:var(--muted);font-weight:600}
+input,select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 14px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button.ghost{background:transparent;color:var(--muted);padding:4px 8px;font-size:.8rem}
+button.ghost:hover{color:var(--high)}
+.form-end{display:flex;align-items:end;gap:10px}
+.status{font-size:.82rem;color:var(--muted)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto}
+svg text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+tr.me td{font-weight:600}
+.empty{padding:22px;text-align:center;color:var(--muted)}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:.9rem}
+.tip b{display:block;font-family:var(--display);font-size:1rem;margin-bottom:4px}
+.tip p{margin:0;color:var(--muted)}
+.countdown{font-family:var(--mono);font-size:1.6rem;color:var(--ink)}
+a{color:var(--accent)}
+.src{font-size:.8rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.scale i{transition:left .4s ease}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="board">
+    <div class="label">Royal Caribbean · Fare watch</div>
+    <h1>Symphony of the Seas, Dec 4 2027</h1>
+    <div class="facts">
+      <div><span class="label">Sailing</span><span class="v">Sat Dec 4 → Sun Dec 12</span></div>
+      <div><span class="label">Length</span><span class="v">8 nights</span></div>
+      <div><span class="label">Port</span><span class="v">Fort Lauderdale</span></div>
+      <div><span class="label">Watching</span><span class="v">Ocean-view balcony</span></div>
+    </div>
+    <div class="route" aria-label="Itinerary">
+      <span>FLL</span><span class="sea">Sea</span><span class="sea">Sea</span><span>St. Kitts</span><span>San Juan</span><span class="sea">Sea</span><span>CocoCay</span><span>Nassau</span><span>FLL</span>
+    </div>
+    <p class="note">There's no Dec 4 sailing in 2026 (Symphony sails Sundays from Galveston this December), so this tracks the 8-night Perfect Day CocoCay &amp; Eastern Caribbean sailing on Dec 4, 2027.</p>
+  </header>
+
+  <section aria-labelledby="v-h">
+    <h2 id="v-h">Is today's fare a deal?</h2>
+    <div class="verdict" id="verdict">
+      <div>
+        <div class="label">Lowest recent balcony fare</div>
+        <div class="price" id="v-price">—</div>
+        <div class="status" id="v-src">Waiting for fares…</div>
+      </div>
+      <div>
+        <span class="pill" id="v-pill">No data yet</span>
+        <div class="scale" aria-hidden="true"><i id="v-mark" style="left:50%"></i></div>
+        <div class="scale-labels num"><span>$1,050</span><span>$1,200</span><span>$1,350</span></div>
+        <p id="v-why">Log a balcony quote below and the verdict updates against comparable 8-night Symphony sailings.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="f-h">
+    <h2 id="f-h">Log a fare you found</h2>
+    <form id="quote-form">
+      <label for="q-date">Date checked<input id="q-date" type="date" required></label>
+      <label for="q-source">Where<input id="q-source" type="text" placeholder="royalcaribbean.com" required></label>
+      <label for="q-cabin">Cabin<select id="q-cabin"><option>Balcony</option><option>Ocean view</option><option>Interior</option><option>Suite</option></select></label>
+      <label for="q-price">Price per person ($)<input id="q-price" type="number" min="1" step="1" inputmode="numeric" required></label>
+      <label for="q-tax">Taxes &amp; fees<select id="q-tax"><option value="incl">Included</option><option value="excl">Not included</option><option value="unknown">Not sure</option></select></label>
+      <label for="q-perks">Perks / promo<input id="q-perks" type="text" placeholder="$100 onboard credit"></label>
+      <div class="form-end"><button type="submit" id="q-save">Save fare</button><span class="status" id="q-status"></span></div>
+    </form>
+  </section>
+
+  <section aria-labelledby="h-h">
+    <h2 id="h-h">Balcony fare history</h2>
+    <div class="chartbox"><svg id="chart" viewBox="0 0 640 220" width="100%" role="img" aria-label="Balcony fare per person over time"></svg></div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Checked</th><th>Source</th><th>Cabin</th><th class="r">Per person</th><th>Taxes</th><th>Perks</th><th></th></tr></thead>
+        <tbody id="log"><tr><td colspan="7" class="empty">No fares logged yet. Add the first one above.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="c-h">
+    <h2 id="c-h">Comparable Symphony sailings</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Sail date</th><th>Itinerary</th><th class="r">Interior</th><th class="r">Ocean view</th><th class="r">Balcony</th></tr></thead>
+        <tbody class="num">
+          <tr><td>Oct 9, 2027</td><td>8N CocoCay &amp; East Carib</td><td class="r">$1,076</td><td class="r">$1,196</td><td class="r">$1,236</td></tr>
+          <tr><td>Oct 23, 2027</td><td>8N CocoCay &amp; East Carib</td><td class="r">$1,052</td><td class="r">$1,172</td><td class="r">$1,212</td></tr>
+          <tr><td>Nov 20, 2027</td><td>8N CocoCay &amp; East Carib</td><td class="r">$1,394</td><td class="r">$1,584</td><td class="r">$1,644</td></tr>
+          <tr class="me"><td>Dec 4, 2027</td><td>8N CocoCay &amp; East Carib</td><td class="r">$994</td><td class="r">$1,134</td><td class="r">$1,164</td></tr>
+          <tr><td>Dec 18, 2027</td><td>8N East Carib Holiday</td><td class="r">from $1,567</td><td class="r">—</td><td class="r">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Per-person starting fares from iCruise and Cruise Web, sampled Oct 23, 2026. Thanksgiving and holiday weeks run well higher, so Dec 4 sits in a soft spot between them.</p>
+  </section>
+
+  <section aria-labelledby="t-h">
+    <h2 id="t-h">How to lock in the best price</h2>
+    <div class="tips">
+      <div class="tip"><b>Reprice window closes</b><div class="countdown" id="fp-count">—</div><p>Final payment for 5+ night sailings is due 90 days out, around Sep 5, 2027. Before that you can ask Royal Caribbean (or your agent) to reprice if the fare drops. They won't do it for you.</p></div>
+      <div class="tip"><b>Book refundable, then watch</b><p>A refundable deposit keeps cancel-and-rebook open if a new promo is marked "new bookings only," which can't be applied as a reprice.</p></div>
+      <div class="tip"><b>Compare like for like</b><p>Check whether a quote includes taxes and port fees, and count perks like onboard credit or BOGO promos. A slightly higher fare with $200 credit can beat a lower bare fare.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const REF = 1200, LO = 1050, HI = 1350;
+  const SAIL = new Date("2027-12-04T16:00:00-05:00");
+  const FINAL = new Date("2027-09-05T00:00:00-04:00");
+  const $ = id => document.getElementById(id);
+  const fmt = n => "$" + Math.round(n).toLocaleString("en-US");
+  let quotes = [], db = null;
+
+  try { $("q-date").value = new Date().toISOString().slice(0,10); } catch(e) {}
+
+  // countdown
+  const days = Math.ceil((FINAL - new Date()) / 864e5);
+  $("fp-count").textContent = days > 0 ? days + " days" : "Passed";
+
+  function verdictFor(p){
+    const r = p / REF;
+    if (r <= 0.92) return ["great","Great deal","Below the cheapest comparable 8-night sailings. Worth booking if the cabin location works."];
+    if (r <= 0.99) return ["good","Good price","At or under what similar October sailings cost. Reasonable to book with a refundable deposit and keep watching."];
+    if (r <= 1.08) return ["fair","Typical","Right around the going rate. No rush; prices on this sailing have room to move."];
+    return ["high","Above normal","Higher than comparable sailings. Wait for a sale unless a perk makes up the gap."];
+  }
+
+  function render(){
+    const bal = quotes.filter(q => q.cabin === "Balcony").sort((a,b) => (a.date > b.date ? 1 : -1));
+    // verdict: lowest balcony fare on the most recent check date
+    if (bal.length){
+      const latestDate = bal[bal.length-1].date;
+      const recent = bal.filter(q => q.date === latestDate).sort((a,b) => a.price - b.price)[0];
+      const [cls,label,why] = verdictFor(recent.price);
+      $("v-price").textContent = fmt(recent.price);
+      $("v-src").textContent = recent.source + " · " + latestDate;
+      const pill = $("v-pill"); pill.className = "pill " + cls; pill.textContent = label;
+      const pct = Math.min(100, Math.max(0, (recent.price - LO) / (HI - LO) * 100));
+      $("v-mark").style.left = pct + "%";
+      const low = Math.min(...bal.map(q => q.price));
+      $("v-why").textContent = why + (low < recent.price ? " Lowest you've logged: " + fmt(low) + "." : "");
+    }
+    // log table
+    const tb = $("log");
+    tb.textContent = "";
+    if (!quotes.length){
+      tb.innerHTML = '<tr><td colspan="7" class="empty">No fares logged yet. Add the first one above.</td></tr>';
+    } else {
+      [...quotes].sort((a,b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.price - b.price)).forEach(q => {
+        const tr = document.createElement("tr");
+        const cells = [q.date, q.source, q.cabin, fmt(q.price), {incl:"Included",excl:"Extra",unknown:"Unknown"}[q.tax] || "Unknown", q.perks || "—"];
+        cells.forEach((c,i) => { const td = document.createElement("td"); td.textContent = c; if (i===3){td.className="r num";} if(i===0){td.className="num";} tr.appendChild(td); });
+        const td = document.createElement("td");
+        if (db && q.id){ const b = document.createElement("button"); b.className="ghost"; b.type="button"; b.textContent="Remove"; b.onclick = () => db.collection("quotes").doc(q.id).delete().catch(()=>{}); td.appendChild(b); }
+        tr.appendChild(td); tb.appendChild(tr);
+      });
+    }
+    drawChart(bal);
+  }
+
+  function drawChart(bal){
+    const svg = $("chart"), W=640, H=220, L=56, R=16, T=14, B=34;
+    const ns = "http://www.w3.org/2000/svg";
+    svg.textContent = "";
+    const el = (n,a,t) => { const e=document.createElementNS(ns,n); for(const k in a) e.setAttribute(k,a[k]); if(t!=null) e.textContent=t; svg.appendChild(e); return e; };
+    const prices = bal.map(q=>q.price);
+    const lo = Math.floor(Math.min(1000, ...prices)/50)*50, hi = Math.ceil(Math.max(1400, ...prices)/50)*50;
+    const y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+    for (let v = lo; v <= hi; v += 100){
+      el("line",{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:"var(--line)","stroke-width":1});
+      el("text",{x:L-8,y:y(v)+4,"text-anchor":"end"},fmt(v));
+    }
+    // reference line
+    el("line",{x1:L,x2:W-R,y1:y(REF),y2:y(REF),stroke:"var(--fair)","stroke-dasharray":"4 4","stroke-width":1.5});
+    el("text",{x:W-R,y:y(REF)-6,"text-anchor":"end",style:"fill:var(--fair)"},"typical " + fmt(REF));
+    if (!bal.length){ el("text",{x:(L+W-R)/2,y:H/2,"text-anchor":"middle"},"Balcony fares you log will chart here"); return; }
+    // group by date: plot lowest per date
+    const byDate = {};
+    bal.forEach(q => { if (!(q.date in byDate) || q.price < byDate[q.date]) byDate[q.date] = q.price; });
+    const dates = Object.keys(byDate).sort();
+    const x = i => dates.length === 1 ? (L + W - R)/2 : L + 12 + i * ((W - R - L - 24) / (dates.length - 1));
+    if (dates.length > 1){
+      const pts = dates.map((d,i) => x(i)+","+y(byDate[d])).join(" ");
+      el("polygon",{points: x(0)+","+(H-B)+" "+pts+" "+x(dates.length-1)+","+(H-B), fill:"var(--accent)", "fill-opacity":0.08});
+      el("polyline",{points:pts,fill:"none",stroke:"var(--accent)","stroke-width":2.5,"stroke-linejoin":"round"});
+    }
+    const step = Math.ceil(dates.length / 6);
+    dates.forEach((d,i) => {
+      const last = i === dates.length - 1;
+      el("circle",{cx:x(i),cy:y(byDate[d]),r:last?5:3.5,fill:last?"var(--accent)":"var(--surface)",stroke:"var(--accent)","stroke-width":2});
+      if (i % step === 0 || last) el("text",{x:x(i),y:H-B+18,"text-anchor":"middle"},d.slice(5));
+      if (last) el("text",{x:x(i),y:y(byDate[d])-10,"text-anchor":"middle",style:"fill:var(--ink)"},fmt(byDate[d]));
+    });
+  }
+
+  const KEY = "symphony-dec4-2027-fares";
+  const SEED = [
+    {id:"s1",date:"2026-10-23",source:"iCruise",cabin:"Balcony",price:1164,tax:"unknown",perks:""},
+    {id:"s2",date:"2026-10-23",source:"CruiseTimetables (RC site sample)",cabin:"Balcony",price:1244,tax:"unknown",perks:""}
+  ];
+  function load(){ try { const v = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(v)) return v; } catch(e) {} return SEED.slice(); }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(quotes)); return true; } catch(e) { return false; } }
+  window.removeQuote = id => { quotes = quotes.filter(q => q.id !== id); save(); render(); };
+  db = { collection: () => ({ doc: id => ({ delete: () => Promise.resolve(window.removeQuote(id)) }) }) };
+  quotes = load();
+
+  $("quote-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const q = { id: Date.now().toString(36), date:$("q-date").value, source:$("q-source").value.trim(), cabin:$("q-cabin").value,
+      price:Number($("q-price").value), tax:$("q-tax").value, perks:$("q-perks").value.trim() };
+    if (!q.date || !q.source || !(q.price > 0)) return;
+    quotes.push(q);
+    $("q-status").textContent = save() ? "Saved in this browser." : "Shown here only; this browser blocks saving.";
+    $("q-price").value = ""; $("q-perks").value = "";
+    render();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
