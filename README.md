@@ -9,7 +9,18 @@ A one-page tracker for Royal Caribbean's **Symphony of the Seas, Dec 4, 2027** (
 - Charts balcony fares over time
 - Counts down to the reprice deadline (final payment, about Sep 5, 2027)
 
-Logged fares are saved in your browser's local storage, so they stay on the device and browser you used.
+Fares come from two places:
+
+- `fares.json` in this repo. A weekly scheduled check adds the latest prices from Royal Caribbean, Expedia, iCruise and other sites here, so everyone who opens the page sees them.
+- Fares you log on the page, saved in that browser's local storage.
+
+Each entry in `fares.json` looks like:
+
+```json
+{"date": "2026-10-23", "source": "Expedia", "cabin": "Balcony", "price": 1211, "tax": "incl", "perks": "60% off 2nd guest"}
+```
+
+`price` is per person in USD. `tax` is `incl`, `excl` or `unknown`.
 
 ## Run it
 

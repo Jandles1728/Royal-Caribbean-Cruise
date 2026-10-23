@@ -217,7 +217,7 @@ a{color:var(--accent)}
         const cells = [q.date, q.source, q.cabin, fmt(q.price), {incl:"Included",excl:"Extra",unknown:"Unknown"}[q.tax] || "Unknown", q.perks || "—"];
         cells.forEach((c,i) => { const td = document.createElement("td"); td.textContent = c; if (i===3){td.className="r num";} if(i===0){td.className="num";} tr.appendChild(td); });
         const td = document.createElement("td");
-        if (db && q.id){ const b = document.createElement("button"); b.className="ghost"; b.type="button"; b.textContent="Remove"; b.onclick = () => db.collection("quotes").doc(q.id).delete().catch(()=>{}); td.appendChild(b); }
+        if (db && q.id && !q.shared){ const b = document.createElement("button"); b.className="ghost"; b.type="button"; b.textContent="Remove"; b.onclick = () => db.collection("quotes").doc(q.id).delete().catch(()=>{}); td.appendChild(b); }
         tr.appendChild(td); tb.appendChild(tr);
       });
     }
@@ -259,26 +259,30 @@ a{color:var(--accent)}
     });
   }
 
-  const KEY = "symphony-dec4-2027-fares";
-  const SEED = [
-    {id:"s1",date:"2026-10-23",source:"iCruise",cabin:"Balcony",price:1164,tax:"unknown",perks:""},
-    {id:"s2",date:"2026-10-23",source:"CruiseTimetables (RC site sample)",cabin:"Balcony",price:1244,tax:"unknown",perks:""}
-  ];
-  function load(){ try { const v = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(v)) return v; } catch(e) {} return SEED.slice(); }
-  function save(){ try { localStorage.setItem(KEY, JSON.stringify(quotes)); return true; } catch(e) { return false; } }
-  window.removeQuote = id => { quotes = quotes.filter(q => q.id !== id); save(); render(); };
+  // Two sources: fares.json in the repo (written by the weekly check) and fares this browser logged.
+  const KEY = "symphony-dec4-2027-mine";
+  let shared = [], mine = [];
+  function load(){ try { const v = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(v)) return v; } catch(e) {} return []; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(mine)); return true; } catch(e) { return false; } }
+  function merge(){ quotes = shared.concat(mine); render(); }
+  window.removeQuote = id => { mine = mine.filter(q => q.id !== id); save(); merge(); };
   db = { collection: () => ({ doc: id => ({ delete: () => Promise.resolve(window.removeQuote(id)) }) }) };
-  quotes = load();
+  mine = load();
+  quotes = mine.slice();
+  fetch("fares.json", { cache: "no-store" })
+    .then(r => r.ok ? r.json() : [])
+    .then(list => { shared = (Array.isArray(list) ? list : []).filter(q => q && q.price > 0).map((q,i) => Object.assign({ id: "f" + i, shared: true }, q, { shared: true })); merge(); })
+    .catch(() => {});
 
   $("quote-form").addEventListener("submit", e => {
     e.preventDefault();
     const q = { id: Date.now().toString(36), date:$("q-date").value, source:$("q-source").value.trim(), cabin:$("q-cabin").value,
       price:Number($("q-price").value), tax:$("q-tax").value, perks:$("q-perks").value.trim() };
     if (!q.date || !q.source || !(q.price > 0)) return;
-    quotes.push(q);
+    mine.push(q);
     $("q-status").textContent = save() ? "Saved in this browser." : "Shown here only; this browser blocks saving.";
     $("q-price").value = ""; $("q-perks").value = "";
-    render();
+    merge();
   });
 
   render();
