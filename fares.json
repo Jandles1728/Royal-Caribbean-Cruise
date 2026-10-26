@@ -5,5 +5,14 @@
   {"date": "2026-10-23", "source": "Expedia", "cabin": "Balcony", "price": 1211, "tax": "incl", "perks": "60% off 2nd guest; 10% off excursions"},
   {"date": "2026-10-23", "source": "Expedia", "cabin": "Ocean view", "price": 1201, "tax": "incl", "perks": "60% off 2nd guest; 10% off excursions"},
   {"date": "2026-10-23", "source": "iCruise", "cabin": "Balcony", "price": 1164, "tax": "unknown", "perks": "$50 onboard credit; BOGO 60% off"},
-  {"date": "2026-10-23", "source": "iCruise", "cabin": "Interior", "price": 994, "tax": "incl", "perks": "$50 onboard credit; BOGO 60% off"}
+  {"date": "2026-10-23", "source": "iCruise", "cabin": "Interior", "price": 994, "tax": "incl", "perks": "$50 onboard credit; BOGO 60% off"},
+  {"date": "2026-10-26", "source": "Royal Caribbean", "cabin": "Balcony", "price": 1244, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-10-26", "source": "Royal Caribbean", "cabin": "Ocean view", "price": 1202, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-10-26", "source": "Royal Caribbean", "cabin": "Interior", "price": 1051, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-10-26", "source": "Expedia", "cabin": "Balcony", "price": 1244, "tax": "incl", "perks": "60% off 2nd guest; up to $800 instant savings (ends 10/26); 10% off excursions"},
+  {"date": "2026-10-26", "source": "Expedia", "cabin": "Ocean view", "price": 1201, "tax": "incl", "perks": "60% off 2nd guest; up to $800 instant savings (ends 10/26); 10% off excursions"},
+  {"date": "2026-10-26", "source": "Expedia", "cabin": "Interior", "price": 1051, "tax": "incl", "perks": "60% off 2nd guest; up to $800 instant savings (ends 10/26); 10% off excursions"},
+  {"date": "2026-10-26", "source": "iCruise", "cabin": "Balcony", "price": 1164, "tax": "incl", "perks": "$50 onboard credit; BOGO 60% off; kids sail free"},
+  {"date": "2026-10-26", "source": "iCruise", "cabin": "Ocean view", "price": 1134, "tax": "incl", "perks": "$50 onboard credit; BOGO 60% off; kids sail free"},
+  {"date": "2026-10-26", "source": "iCruise", "cabin": "Interior", "price": 994, "tax": "incl", "perks": "$50 onboard credit; BOGO 60% off; kids sail free"}
 ]
