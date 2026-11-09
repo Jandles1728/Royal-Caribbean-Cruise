@@ -19,5 +19,14 @@
   {"date": "2026-11-02", "source": "Royal Caribbean", "cabin": "Ocean view", "price": 1143, "tax": "incl", "perks": "Early Booking Bonus"},
   {"date": "2026-11-02", "source": "Royal Caribbean", "cabin": "Interior", "price": 1000, "tax": "incl", "perks": "Early Booking Bonus"},
   {"date": "2026-11-02", "source": "Royal Caribbean", "cabin": "Suite", "price": 2534, "tax": "incl", "perks": "Early Booking Bonus"},
-  {"date": "2026-11-02", "source": "iCruise", "cabin": "Interior", "price": 994, "tax": "incl", "perks": "'from' price (lowest cabin); $50 onboard credit; BOGO 60% off; kids sail free"}
+  {"date": "2026-11-02", "source": "iCruise", "cabin": "Interior", "price": 994, "tax": "incl", "perks": "'from' price (lowest cabin); $50 onboard credit; BOGO 60% off; kids sail free"},
+  {"date": "2026-11-09", "source": "Royal Caribbean", "cabin": "Balcony", "price": 1131, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-11-09", "source": "Royal Caribbean", "cabin": "Ocean view", "price": 1096, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-11-09", "source": "Royal Caribbean", "cabin": "Interior", "price": 961, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-11-09", "source": "Royal Caribbean", "cabin": "Suite", "price": 2434, "tax": "incl", "perks": "Early Booking Bonus"},
+  {"date": "2026-11-09", "source": "Expedia", "cabin": "Balcony", "price": 1131, "tax": "incl", "perks": "60% off 2nd guest; up to $100 OBC (ends 11/30); up to $1000 instant savings (ends 11/9); 10% off excursions"},
+  {"date": "2026-11-09", "source": "Expedia", "cabin": "Ocean view", "price": 1096, "tax": "incl", "perks": "60% off 2nd guest; up to $100 OBC (ends 11/30); up to $1000 instant savings (ends 11/9); 10% off excursions"},
+  {"date": "2026-11-09", "source": "Expedia", "cabin": "Interior", "price": 961, "tax": "incl", "perks": "60% off 2nd guest; up to $100 OBC (ends 11/30); up to $1000 instant savings (ends 11/9); 10% off excursions"},
+  {"date": "2026-11-09", "source": "Expedia", "cabin": "Suite", "price": 2434, "tax": "incl", "perks": "60% off 2nd guest; up to $100 OBC (ends 11/30); up to $1000 instant savings (ends 11/9); 10% off excursions"},
+  {"date": "2026-11-09", "source": "iCruise", "cabin": "Interior", "price": 961, "tax": "incl", "perks": "'from' price (lowest cabin); $50 OBC early booking; BOGO 60% off; kids sail free; up to $150 OBC"}
 ]
